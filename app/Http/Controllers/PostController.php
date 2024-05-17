@@ -3,19 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
     public function index()
     {
-        $posts = Post::all();
+        $posts = Post::with('category')->get();
         return view('posts.index', compact('posts'));
     }
 
     public function create()
     {
-        return view('posts.create');
+        $categories = Category::all();
+        return view('posts.create', compact('categories'));
     }
 
     public function store(Request $request)
@@ -24,9 +26,16 @@ class PostController extends Controller
             'title' => 'required',
             'content' => 'required',
             'slug' => 'required|unique:posts',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'category_id' => 'required|exists:categories,id',
         ]);
 
-        Post::create($request->all());
+        $data = $request->all();
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('images', 'public');
+        }
+
+        Post::create($data);
         return redirect()->route('posts.index')->with('success', 'Post created successfully.');
     }
 
@@ -37,7 +46,8 @@ class PostController extends Controller
 
     public function edit(Post $post)
     {
-        return view('posts.edit', compact('post'));
+        $categories = Category::all();
+        return view('posts.edit', compact('post', 'categories'));
     }
 
     public function update(Request $request, Post $post)
@@ -46,9 +56,16 @@ class PostController extends Controller
             'title' => 'required',
             'content' => 'required',
             'slug' => 'required|unique:posts,slug,' . $post->id,
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'category_id' => 'required|exists:categories,id',
         ]);
 
-        $post->update($request->all());
+        $data = $request->all();
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('images', 'public');
+        }
+
+        $post->update($data);
         return redirect()->route('posts.index')->with('success', 'Post updated successfully.');
     }
 
@@ -58,3 +75,4 @@ class PostController extends Controller
         return redirect()->route('posts.index')->with('success', 'Post deleted successfully.');
     }
 }
+    
