@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
@@ -25,7 +26,10 @@ class CategoryController extends Controller
             'slug' => 'required|unique:categories',
         ]);
 
-        Category::create($request->all());
+        $data = $request->all();
+        $data['slug'] = Str::slug($request->name);
+
+        Category::create($data);
         return redirect()->route('categories.index')->with('success', 'Category created successfully.');
     }
 
@@ -46,7 +50,10 @@ class CategoryController extends Controller
             'slug' => 'required|unique:categories,slug,' . $category->id,
         ]);
 
-        $category->update($request->all());
+        $data = $request->all();
+        $data['slug'] = Str::slug($request->name);
+
+        $category->update($data);
         return redirect()->route('categories.index')->with('success', 'Category updated successfully.');
     }
 

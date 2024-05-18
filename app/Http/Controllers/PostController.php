@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class PostController extends Controller
 {
@@ -31,6 +32,7 @@ class PostController extends Controller
         ]);
 
         $data = $request->all();
+        $data['slug'] = Str::slug($request->title);
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('images', 'public');
         }
@@ -61,6 +63,7 @@ class PostController extends Controller
         ]);
 
         $data = $request->all();
+        $data['slug'] = Str::slug($request->title);
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('images', 'public');
         }
@@ -75,4 +78,3 @@ class PostController extends Controller
         return redirect()->route('posts.index')->with('success', 'Post deleted successfully.');
     }
 }
-    
