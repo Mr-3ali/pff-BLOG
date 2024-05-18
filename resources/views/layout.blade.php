@@ -15,7 +15,7 @@
                 <div class="flex space-x-4">
                     <a class="text-gray-800 hover:text-gray-600" href="{{ route('posts.index') }}">Posts</a>
                     <a class="text-gray-800 hover:text-gray-600" href="{{ route('posts.create') }}">Create Post</a>
-                    {{-- <a class="text-gray-800 hover:text-gray-600" href="{{ route('categories.index') }}">Categories</a> --}}
+                    <a class="text-gray-800 hover:text-gray-600" href="{{ route('categories.index') }}">Categories</a>
                 </div>
             </div>
         </div>
