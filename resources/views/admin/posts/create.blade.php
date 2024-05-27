@@ -1,9 +1,9 @@
-@extends('layout')
+@extends('admin.layout')
 
 @section('content')
     <div class="bg-white p-6 rounded-lg shadow-lg">
-        <h1 class="text-2xl font-bold mb-6">Create Post</h1>
-        <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">
+        <h1 class="text-2xl font-bold mb-6">Admin - Create Post</h1>
+        <form action="{{ route('admin.posts.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="mb-4">
                 <label for="title" class="block text-gray-700">Title</label>
@@ -19,15 +19,10 @@
             </div>
             <div class="mb-4">
                 <label for="category_id" class="block text-gray-700">Category</label>
-                <select name="category_id" class="w-full p-2 border border-gray-300 rounded mt-1" required id="category-select">
-                    @if ($categories->isEmpty())
-                        <option value="">No categories available</option>
-                    @else
-                        @foreach ($categories as $category)
-                            <option value="{{ $category->id }}">{{ $category->name }}</option>
-                        @endforeach
-                    @endif
-                    <option value="create-category">Create new category</option>
+                <select name="category_id" class="w-full p-2 border border-gray-300 rounded mt-1" required>
+                    @foreach ($categories as $category)
+                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                    @endforeach
                 </select>
             </div>
             <div class="mb-4">
@@ -39,12 +34,4 @@
             </button>
         </form>
     </div>
-
-    <script>
-        document.getElementById('category-select').addEventListener('change', function () {
-            if (this.value === 'create-category') {
-                window.location.href = "{{ route('categories.create') }}";
-            }
-        });
-    </script>
 @endsection

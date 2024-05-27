@@ -7,22 +7,26 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
-class PostController extends Controller
+class AdminPostController extends Controller
 {
-    public function index()
+    public function adminIndex()
     {
-        $posts = Post::with('category')->get();
-        return view('posts.index', compact('posts'));
+        $this->authorize('viewAny', Post::class);
+        $posts = Post::with('category')->latest()->paginate(10); // Change to paginate
+        return view('admin.posts.index', compact('posts'));
     }
 
     public function create()
     {
+        $this->authorize('create', Post::class);
         $categories = Category::all();
-        return view('posts.create', compact('categories'));
+        return view('admin.posts.create', compact('categories'));
     }
 
     public function store(Request $request)
     {
+        $this->authorize('create', Post::class);
+
         $request->validate([
             'title' => 'required',
             'content' => 'required',
@@ -38,22 +42,22 @@ class PostController extends Controller
         }
 
         Post::create($data);
-        return redirect()->route('posts.index')->with('success', 'Post created successfully.');
-    }
-
-    public function show(Post $post)
-    {
-        return view('posts.show', compact('post'));
+        return redirect()->route('admin.posts.index')->with('success', 'Post created successfully.');
     }
 
     public function edit(Post $post)
-    {
-        $categories = Category::all();
-        return view('posts.edit', compact('post', 'categories'));
-    }
+{
+    $this->authorize('update', $post);
+
+    $categories = Category::all();
+    return view('admin.posts.edit', compact('post', 'categories'));
+}
+
 
     public function update(Request $request, Post $post)
     {
+        $this->authorize('update', $post);
+
         $request->validate([
             'title' => 'required',
             'content' => 'required',
@@ -69,12 +73,14 @@ class PostController extends Controller
         }
 
         $post->update($data);
-        return redirect()->route('posts.index')->with('success', 'Post updated successfully.');
+        return redirect()->route('admin.posts.index')->with('success', 'Post updated successfully.');
     }
 
     public function destroy(Post $post)
     {
+        $this->authorize('delete', $post);
+
         $post->delete();
-        return redirect()->route('posts.index')->with('success', 'Post deleted successfully.');
+        return redirect()->route('admin.posts.index')->with('success', 'Post deleted successfully.');
     }
 }
