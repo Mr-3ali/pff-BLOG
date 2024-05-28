@@ -41,18 +41,20 @@ class AdminPostController extends Controller
             $data['image'] = $request->file('image')->store('images', 'public');
         }
 
+        // Handle Quill.js content
+        $data['content'] = $request->input('content');
+
         Post::create($data);
         return redirect()->route('admin.posts.index')->with('success', 'Post created successfully.');
     }
 
     public function edit(Post $post)
-{
-    $this->authorize('update', $post);
+    {
+        $this->authorize('update', $post);
 
-    $categories = Category::all();
-    return view('admin.posts.edit', compact('post', 'categories'));
-}
-
+        $categories = Category::all();
+        return view('admin.posts.edit', compact('post', 'categories'));
+    }
 
     public function update(Request $request, Post $post)
     {
@@ -71,6 +73,9 @@ class AdminPostController extends Controller
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('images', 'public');
         }
+
+        // Handle Quill.js content
+        $data['content'] = $request->input('content');
 
         $post->update($data);
         return redirect()->route('admin.posts.index')->with('success', 'Post updated successfully.');

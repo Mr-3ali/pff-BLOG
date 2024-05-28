@@ -3,48 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <title>Admin Management Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
-        body { font-family: 'Inter', sans-serif; font-size: 0.875rem; } /* Adjusted font size */
-        .sidebar { width: 240px; }
-        .content { margin-left: 240px; }
-        .sidebar a { font-size: 0.875rem; } /* Adjusted font size */
+        .sidebar-minimized {
+            width: 64px;
+        }
+        .sidebar-expanded {
+            width: 240px;
+        }
+        .sidebar-text {
+            transition: opacity 0.3s ease-in-out;
+        }
+        .hidden-text {
+            opacity: 0;
+        }
+        body {
+            font-size: 90%;
+        }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800">
-    <div class="flex">
-        <aside class="fixed top-0 left-0 h-full sidebar bg-white text-gray-900 shadow-md flex flex-col justify-between">
-            <div class="p-6 flex-1">
-                <nav class="space-y-8 text-sm">
-                    <div class="space-y-2">
-                        <h2 class="text-sm font-semibold tracking-widest uppercase text-gray-600">Management</h2>
-                        <div class="flex flex-col space-y-1">
-                            <a rel="noopener noreferrer" href="{{ route('admin.posts.index') }}" class="hover:text-blue-500">Manage Posts</a>
-                            <a rel="noopener noreferrer" href="{{ route('admin.categories.index') }}" class="hover:text-blue-500">Manage Categories</a>
-                            {{-- <a rel="noopener noreferrer" href="{{ route('admin.comments.index') }}" class="hover:text-blue-500">Manage Comments</a> --}}
-                        </div>
-                    </div>
-                </nav>
-            </div>
-            <div class="p-6">
-                <div class="space-y-2">
-                    <h2 class="text-sm font-semibold tracking-widest uppercase text-gray-600">Account</h2>
-                    <div class="flex flex-col space-y-1">
-                        <a rel="noopener noreferrer" href="{{ route('logout') }}" class="text-red-500 hover:text-red-700">
-                            <i class="fas fa-sign-out-alt mr-2"></i> Logout
-                        </a>
-                    </div>
+<body class="bg-gray-100 flex">
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="h-screen bg-white shadow-md flex flex-col sidebar-expanded transition-all duration-300">
+        <div class="flex items-center justify-between p-4 border-b">
+            <button id="toggleSidebar" class="focus:outline-none text-gray-800 text-xl">
+                <i class="fas fa-bars"></i>
+            </button>
+            <span class="text-xl font-bold text-gray-800 ml-3 sidebar-title">Admin :</span>
+        </div>
+        <nav class="mt-6 flex-1">
+            <div class="flex flex-col">
+                <button class="flex items-center p-3 text-gray-800 hover:bg-gray-200 rounded-md focus:outline-none" onclick="toggleDropdown('postsDropdown')">
+                    <i class="fas fa-pencil-alt text-lg"></i>
+                    <span class="ml-3 sidebar-text">Posts :</span>
+                    <i class="fas fa-chevron-down ml-auto sidebar-text"></i>
+                </button>
+                <div id="postsDropdown" class="hidden flex-col pl-12">
+                    <a href="{{ route('admin.posts.create') }}" class="flex items-center p-3 text-gray-800 hover:bg-gray-200 rounded-md">
+                        <span class="ml-3 sidebar-text">Create Post</span>
+                    </a>
+                    <a href="{{ route('admin.posts.index') }}" class="flex items-center p-3 text-gray-800 hover:bg-gray-200 rounded-md">
+                        <span class="ml-3 sidebar-text">Manage Posts</span>
+                    </a>
                 </div>
             </div>
-        </aside>
-        <div class="flex-1 flex flex-col min-h-screen content">
-            <main class="flex-1 p-4">
-                @yield('content')
-            </main>
+            <div class="flex flex-col">
+                <button class="flex items-center p-3 text-gray-800 hover:bg-gray-200 rounded-md focus:outline-none" onclick="toggleDropdown('categoriesDropdown')">
+                    <i class="fas fa-folder text-lg"></i>
+                    <span class="ml-3 sidebar-text">Categories :</span>
+                    <i class="fas fa-chevron-down ml-auto sidebar-text"></i>
+                </button>
+                <div id="categoriesDropdown" class="hidden flex-col pl-12">
+                    <a href="{{ route('admin.categories.create') }}" class="flex items-center p-3 text-gray-800 hover:bg-gray-200 rounded-md">
+                        <span class="ml-3 sidebar-text">Create Category</span>
+                    </a>
+                    <a href="{{ route('admin.categories.index') }}" class="flex items-center p-3 text-gray-800 hover:bg-gray-200 rounded-md">
+                        <span class="ml-3 sidebar-text">Manage Categories</span>
+                    </a>
+                </div>
+            </div>
+            <a href="#" class="flex items-center p-3 text-gray-800 hover:bg-gray-200 rounded-md">
+                <i class="fas fa-comments text-lg"></i>
+                <span class="ml-3 sidebar-text">Comments :</span>
+            </a>
+        </nav>
+        <div class="p-4 border-t">
+            <a href="{{ route('logout') }}" class="flex items-center p-3 text-gray-800 hover:bg-red-100 rounded-md">
+                <i class="fas fa-sign-out-alt text-lg"></i>
+                <span class="ml-3 sidebar-text">Logout</span>
+            </a>
         </div>
     </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 p-6">
+        @yield('content')
+    </div>
+
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script>
+        const toggleSidebar = document.getElementById('toggleSidebar');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarText = document.querySelectorAll('.sidebar-text');
+        const sidebarTitle = document.querySelector('.sidebar-title');
+
+        toggleSidebar.addEventListener('click', () => {
+            sidebar.classList.toggle('sidebar-minimized');
+            sidebar.classList.toggle('sidebar-expanded');
+            sidebarText.forEach(text => text.classList.toggle('hidden-text'));
+            sidebarTitle.classList.toggle('hidden');
+        });
+
+        function toggleDropdown(id) {
+            const dropdown = document.getElementById(id);
+            dropdown.classList.toggle('hidden');
+        }
+    </script>
+    @stack('scripts')
 </body>
 </html>

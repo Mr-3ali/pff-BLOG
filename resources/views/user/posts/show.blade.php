@@ -18,7 +18,7 @@
                 Published on {{ $post->created_at->format('F j, Y') }}
             </p>
             <div>
-                {!! nl2br(e($post->content)) !!}
+                {!! $post->content !!}
             </div>
         </div>
     </article>
