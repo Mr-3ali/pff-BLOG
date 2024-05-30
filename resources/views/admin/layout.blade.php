@@ -6,7 +6,6 @@
     <title>Admin Management Page</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <style>
         .sidebar-minimized {
             width: 64px;
@@ -20,15 +19,27 @@
         .hidden-text {
             opacity: 0;
         }
-        body {
-            font-size: 90%;
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
         }
     </style>
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        tinymce.init({
+            selector: 'textarea.rich-text',
+            plugins: 'image link media table',
+            toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | image media link',
+            height: 400
+        });
+    </script>
 </head>
-<body class="bg-gray-100 flex">
+<body class="bg-gray-100 flex h-full w-full">
 
     <!-- Sidebar -->
-    <div id="sidebar" class="h-screen bg-white shadow-md flex flex-col sidebar-expanded transition-all duration-300">
+    <div id="sidebar" class="h-full bg-white shadow-md flex flex-col sidebar-expanded transition-all duration-300">
         <div class="flex items-center justify-between p-4 border-b">
             <button id="toggleSidebar" class="focus:outline-none text-gray-800 text-xl">
                 <i class="fas fa-bars"></i>
@@ -80,11 +91,10 @@
     </div>
 
     <!-- Main Content -->
-    <div class="flex-1 p-6">
+    <div class="flex-1 p-6 h-full w-full">
         @yield('content')
     </div>
 
-    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <script>
         const toggleSidebar = document.getElementById('toggleSidebar');
         const sidebar = document.getElementById('sidebar');
@@ -103,6 +113,6 @@
             dropdown.classList.toggle('hidden');
         }
     </script>
-    @stack('scripts')
+
 </body>
 </html>
