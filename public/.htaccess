@@ -2,6 +2,10 @@
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
     </IfModule>
+#     <IfModule mod_headers.c>
+#     Header set Content-Security-Policy "default-src 'self'; img-src 'self' https://via.placeholder.com; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';"
+# </IfModule>
+
 
     RewriteEngine On
 
