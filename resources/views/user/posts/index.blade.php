@@ -1,43 +1,34 @@
 @extends('layout')
 
 @section('content')
-<!-- Posts Section -->
-<section class="w-full md:w-2/3 flex flex-col items-center px-3">
+<div class="max-w-7xl mx-auto my-8 px-2">
 
-    @foreach ($posts as $post)
-        <article class="flex flex-col shadow my-4 w-full md:w-2/3">
-            <!-- Article Image -->
-            <a href="{{ route('posts.show', $post->slug) }}" class="hover:opacity-75">
-                <img src="{{ $post->image ? asset('storage/' . $post->image) : 'https://via.placeholder.com/400x200' }}" alt="{{ $post->title }}" class="w-full h-48 object-cover">
-            </a>
-            <div class="bg-white flex flex-col justify-start p-6">
-                <a href="{{ route('categories.show', $post->category->slug) }}" class="text-blue-700 text-sm font-bold uppercase pb-4">{{ $post->category->name }}</a>
-                <a href="{{ route('posts.show', $post->slug) }}" class="text-3xl font-bold hover:text-gray-700 pb-4">{{ $post->title }}</a>
-                <p class="text-sm pb-3">
-                    By <a href="#" class="font-semibold hover:text-gray-800">Author Name</a>, Published on {{ $post->created_at->format('F jS, Y') }}
-                </p>
-                <a href="{{ route('posts.show', $post->slug) }}" class="pb-6">{{ Str::limit(strip_tags($post->content), 150) }}</a>
-                <a href="{{ route('posts.show', $post->slug) }}" class="uppercase text-gray-800 hover:text-black">Continue Reading <i class="fas fa-arrow-right"></i></a>
-            </div>
-        </article>
-    @endforeach
+    <ul class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 p-2 xl:p-5">
+        @foreach ($posts as $post)
+            <li class="relative bg-white flex flex-col justify-between border rounded shadow-md hover:shadow-teal-400">
+                <a class="relative" href="{{ route('posts.show', $post->slug) }}">
+                    <img class="rounded-t-lg w-full object-cover h-48" src="{{ $post->image ? asset('storage/' . $post->image) : 'https://via.placeholder.com/400x200' }}" alt="{{ $post->title }}" loading="lazy">
+                </a>
+                <div class="flex flex-col justify-between gap-3 px-4 py-2">
+                    <a href="{{ route('posts.show', $post->slug) }}" class="flex flex-col text-left text-xl font-semibold text-teal-700 hover:text-teal-800">
+                        <span>{{ $post->title }}</span>
+                        <small class="font-medium text-sm">- {{ $post->category->name }}</small>
+                    </a>
+                    <p class="text-gray-600">{{ Str::limit(strip_tags($post->content), 150) }}</p>
+                    <a href="{{ route('posts.show', $post->slug) }}" class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
+                        Read more
+                        <svg class="rtl:rotate-180 w-3.5 h-3.5 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                        </svg>
+                    </a>
+                </div>
+            </li>
+        @endforeach
+    </ul>
 
     <!-- Pagination -->
     <div class="flex items-center py-8">
-        {{ $posts->links() }}
+        {{ $posts->links('vendor.pagination.custom') }}
     </div>
-
-</section>
-
-<!-- Sidebar Section -->
-<aside class="w-full md:w-1/3 flex flex-col items-center px-3">
-
-    <div class="w-full bg-white shadow flex flex-col my-4 p-6">
-        <p class="text-xl font-semibold pb-5">About Us</p>
-        <p class="pb-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas mattis est eu odio sagittis tristique. Vestibulum ut finibus leo. In hac habitasse platea dictumst.</p>
-        <a href="#" class="w-full bg-blue-800 text-white font-bold text-sm uppercase rounded hover:bg-blue-700 flex items-center justify-center px-2 py-3 mt-4">
-            Get to know us
-        </a>
-    </div>
-</aside>
+</div>
 @endsection
