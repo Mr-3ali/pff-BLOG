@@ -9,11 +9,25 @@ use Illuminate\Support\Str;
 
 class AdminPostController extends Controller
 {
-    public function adminIndex()
+    public function index(Request $request)
     {
         $this->authorize('viewAny', Post::class);
-        $posts = Post::with('category')->latest()->paginate(10); // Change to paginate
-        return view('admin.posts.index', compact('posts'));
+        
+        // Search and Sort Logic
+        $search = $request->input('search');
+        $sortOrder = $request->input('sort_order', 'desc');
+        
+        $query = Post::with('category');
+
+        if ($search) {
+            $query->where('title', 'like', '%' . $search . '%')
+                  ->orWhere('content', 'like', '%' . $search . '%');
+        }
+
+        $posts = $query->orderBy('created_at', $sortOrder)->paginate(10);
+        $totalPosts = Post::count();
+        
+        return view('admin.posts.index', compact('posts', 'totalPosts', 'search', 'sortOrder'));
     }
 
     public function create()

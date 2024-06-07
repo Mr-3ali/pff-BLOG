@@ -21,20 +21,12 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // Admin Routes
-Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/admin/posts', [AdminPostController::class, 'adminIndex'])->name('admin.posts.index');
-    Route::get('/admin/posts/create', [AdminPostController::class, 'create'])->name('admin.posts.create');
-    Route::post('/admin/posts', [AdminPostController::class, 'store'])->name('admin.posts.store');
-    Route::get('/admin/posts/{post:slug}/edit', [AdminPostController::class, 'edit'])->name('admin.posts.edit');
-    Route::put('/admin/posts/{post:slug}', [AdminPostController::class, 'update'])->name('admin.posts.update');
-    Route::delete('/admin/posts/{post:slug}', [AdminPostController::class, 'destroy'])->name('admin.posts.destroy');
-
-    Route::get('/admin/categories', [AdminCategoryController::class, 'index'])->name('admin.categories.index');
-    Route::get('/admin/categories/create', [AdminCategoryController::class, 'create'])->name('admin.categories.create');
-    Route::post('/admin/categories', [AdminCategoryController::class, 'store'])->name('admin.categories.store');
-    Route::get('/admin/categories/{category:slug}/edit', [AdminCategoryController::class, 'edit'])->name('admin.categories.edit');
-    Route::put('/admin/categories/{category:slug}', [AdminCategoryController::class, 'update'])->name('admin.categories.update');
-    Route::delete('/admin/categories/{category:slug}', [AdminCategoryController::class, 'destroy'])->name('admin.categories.destroy');
+Route::middleware(['auth', 'admin'])->prefix('admin')->as('admin.')->group(function () {
+    // Admin Posts Routes
+    Route::resource('posts', AdminPostController::class)->except(['show']);
+    
+    // Admin Categories Routes
+    Route::resource('categories', AdminCategoryController::class)->except(['show']);
 });
 
 Auth::routes();
