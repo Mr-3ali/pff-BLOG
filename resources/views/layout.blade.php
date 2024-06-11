@@ -7,27 +7,27 @@
     <meta name="author" content="David Grzyb">
     <meta name="description" content="">
 
-    <!-- Tailwind CSS -->
+    <!-- Tailwind CSS with Typography Plugin -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
-    <style>
-        @import url('https://fonts.googleapis.com/css?family=Karla:400,700&display=swap');
-
-        body {
-            font-family: 'Karla', sans-serif;
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/@tailwindcss/typography@0.4.0/dist/typography.min.css" rel="stylesheet">
 
     <!-- AlpineJS -->
     <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
     <!-- Font Awesome -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" crossorigin="anonymous"></script>
+
+    <style>
+        body {
+            font-family: 'Karla', sans-serif;
+        }
+    </style>
 </head>
 <body class="bg-white">
 
     <!-- Top Bar Nav -->
     <nav class="w-full py-4 bg-blue-800 shadow">
-        <div class="container mx-auto flex items-center justify-between">
-            <div class="flex items-center space-x-6 text-white">
+        <div class="container mx-auto flex items-center justify-between text-white">
+            <div class="flex items-center space-x-6">
                 <a href="#"><i class="fab fa-facebook"></i></a>
                 <a href="#"><i class="fab fa-instagram"></i></a>
                 <a href="#"><i class="fab fa-twitter"></i></a>
@@ -35,7 +35,7 @@
             </div>
             @auth
                 @if (Auth::user()->is_admin)
-                    <div class="text-white">
+                    <div>
                         <a href="{{ route('admin.posts.index') }}" class="hover:underline">Admin Management</a>
                     </div>
                 @endif
@@ -54,14 +54,14 @@
         <div class="block sm:hidden">
             <a
                 href="#"
-                class="block md:hidden text-base font-bold uppercase text-center flex justify-center items-center"
+                class="block text-base font-bold uppercase text-center flex justify-center items-center"
                 @click="open = !open"
             >
-                Topics <i :class="open ? 'fa-chevron-down': 'fa-chevron-up'" class="fas ml-2"></i>
+                Topics <i :class="open ? 'fa-chevron-up' : 'fa-chevron-down'" class="fas ml-2"></i>
             </a>
         </div>
-        <div :class="open ? 'block': 'hidden'" class="w-full flex-grow sm:flex sm:items-center sm:w-auto">
-            <div class="w-full container mx-auto flex flex-col sm:flex-row items-center justify-center text-sm font-bold uppercase mt-0 px-6 py-2">
+        <div :class="open ? 'block' : 'hidden'" class="w-full flex-grow sm:flex sm:items-center sm:w-auto">
+            <div class="w-full container mx-auto flex flex-col sm:flex-row items-center justify-center text-sm font-bold uppercase px-6 py-2">
                 @foreach ($categories as $category)
                     <a href="{{ route('categories.show', $category->slug) }}" class="hover:bg-gray-400 rounded py-2 px-4 mx-2">{{ $category->name }}</a>
                 @endforeach

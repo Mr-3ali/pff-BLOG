@@ -2,17 +2,17 @@
 
 @section('content')
 <!-- Post Section -->
-<section class="max-w-3xl mx-auto p-4">
+<section class="max-w-5xl mx-auto p-4">
     <article class="bg-white rounded shadow-lg overflow-hidden mb-6">
         @if ($post->image)
             <img src="{{ asset('storage/' . $post->image) }}" alt="{{ $post->title }}" class="w-full h-64 object-cover">
         @endif
         <div class="p-6">
-            <a href="{{ route('categories.show', $post->category->slug) }}" class="text-blue-700 text-sm font-bold uppercase">{{ $post->category->name }}</a>
             <h1 class="text-3xl font-bold mt-2">{{ $post->title }}</h1>
             <p class="text-sm text-gray-600 mt-2">
                 Published on {{ $post->created_at->format('F j, Y') }}
             </p>
+            <a href="{{ route('categories.show', $post->category->slug) }}" class="text-blue-700 text-xs font-bold uppercase ">{{ $post->category->name }}</a>
             <div class="prose prose-lg mt-6">
                 {!! $post->content !!}
             </div>

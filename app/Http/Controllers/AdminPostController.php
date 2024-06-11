@@ -55,7 +55,6 @@ class AdminPostController extends Controller
             $data['image'] = $request->file('image')->store('images', 'public');
         }
 
-        // Handle Quill.js content
         $data['content'] = $request->input('content');
 
         Post::create($data);
@@ -88,7 +87,6 @@ class AdminPostController extends Controller
             $data['image'] = $request->file('image')->store('images', 'public');
         }
 
-        // Handle Quill.js content
         $data['content'] = $request->input('content');
 
         $post->update($data);
