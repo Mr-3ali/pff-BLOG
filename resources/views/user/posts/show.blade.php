@@ -4,58 +4,90 @@
 <!-- Post Section -->
 <section class="max-w-5xl mx-auto p-4">
     <article class="bg-white rounded shadow-lg overflow-hidden mb-6">
-        @if ($post->image)
-            <img src="{{ asset('storage/' . $post->image) }}" alt="{{ $post->title }}" class="w-full h-64 object-cover">
-        @endif
-        <div class="p-6">
-            <h1 class="text-3xl font-bold mt-2">{{ $post->title }}</h1>
-            <p class="text-sm text-gray-600 mt-2">
-                Published on {{ $post->created_at->format('F j, Y') }}
-            </p>
-            <a href="{{ route('categories.show', $post->category->slug) }}" class="text-blue-700 text-xs font-bold uppercase ">{{ $post->category->name }}</a>
-            <div class="prose prose-lg mt-6">
-                {!! $post->content !!}
+        <div class="flex items-start">
+            @if ($post->image)
+                <!-- Post Image -->
+                <img src="{{ asset('storage/' . $post->image) }}" alt="{{ $post->title }}" class="w-1/3 h-48 object-cover rounded-l-lg">
+            @endif
+            <div class="p-6 w-2/3">
+                <!-- Post Title -->
+                <h1 class="text-3xl font-bold">{{ $post->title }}</h1>
+                <!-- Post Metadata -->
+                <p class="text-sm text-gray-600 mt-1">Published on {{ $post->created_at->format('F j, Y') }}</p>
+                <a href="{{ route('categories.show', $post->category->slug) }}" class="text-blue-700 text-xs font-bold uppercase mt-1 block">{{ $post->category->name }}</a>
             </div>
+        </div>
+        <!-- Post Content -->
+        <div class="p-6 prose prose-lg mt-4">
+            {!! $post->content !!}
         </div>
     </article>
 
+    <!-- You Might Also Like Section -->
+    <section class="bg-white rounded shadow-lg p-6 mb-6">
+        <h2 class="text-xl font-bold mb-4">You Might Also Like</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            @foreach ($relatedPosts as $relatedPost)
+                <div class="bg-gray-100 p-4 rounded flex flex-col justify-between">
+                    <a href="{{ route('posts.show', $relatedPost->slug) }}">
+                        @if ($relatedPost->image)
+                            <img src="{{ asset('storage/' . $relatedPost->image) }}" alt="{{ $relatedPost->title }}" class="w-full h-32 object-cover rounded">
+                        @else
+                            <img src="https://via.placeholder.com/150" alt="{{ $relatedPost->title }}" class="w-full h-32 object-cover rounded">
+                        @endif
+                        <h3 class="text-lg font-semibold mt-2">{{ $relatedPost->title }}</h3>
+                    </a>
+                    <p class="text-xs text-gray-600 mt-1">Published on {{ $relatedPost->created_at->format('F j, Y') }}</p>
+                </div>
+            @endforeach
+        </div>
+    </section>
+
     <!-- Comments Section -->
     <section class="bg-white rounded shadow-lg p-6 mb-6">
-        <h2 class="text-xl font-bold mb-4">Comments</h2>
+        <h2 class="text-xl font-bold mb-4">Comments ({{ $post->comments->count() }})</h2>
+        <!-- Display Comments -->
         @foreach ($post->comments as $comment)
-            <div class="bg-gray-100 p-4 mb-4 rounded">
-                <p class="text-sm text-gray-600">Published on {{ $comment->created_at->format('F j, Y') }}</p>
-                <p>{{ $comment->content }}</p>
+            <div class="bg-gray-100 p-4 mb-4 rounded flex items-start">
+                <!-- Random User Icon -->
+                <div class="mr-4">
+                    <div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
+                        <span class="text-gray-700 text-lg font-bold">{{ strtoupper(substr($comment->user->name, 0, 1)) }}</span>
+                    </div>
+                </div>
+                <div class="flex-grow">
+                    <p class="text-sm text-gray-600 font-bold">{{ $comment->user->name }}</p>
+                    <p class="text-sm text-gray-600">Published on {{ $comment->created_at->format('F j, Y') }}</p>
+                    <p class="mt-2">{{ $comment->content }}</p>
+                </div>
+                @auth
+                    @if (Auth::id() == $comment->user_id || Auth::user()->is_admin)
+                        <form action="{{ route('comments.destroy', $comment->id) }}" method="POST" class="ml-4">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="text-red-500 hover:text-red-700">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    @endif
+                @endauth
             </div>
         @endforeach
 
         @auth
-            <form action="{{ route('comments.store', $post->slug) }}" method="POST" class="bg-gray-100 p-4 rounded">
+            <!-- Comment Form -->
+            <form action="{{ route('comments.store', $post->slug) }}" method="POST" class="bg-gray-100 p-4 rounded flex items-center">
                 @csrf
-                <div class="mb-4">
+                <div class="flex-grow mr-4">
                     <label for="content" class="block text-gray-700">Add a Comment</label>
-                    <textarea name="content" rows="3" class="w-full p-2 border border-gray-300 rounded mt-1" required></textarea>
+                    <textarea name="content" rows="2" class="w-full p-2 border border-gray-300 rounded mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400" required></textarea>
                 </div>
-                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Post Comment</button>
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Post Comment</button>
             </form>
         @else
+            <!-- Login Prompt -->
             <p class="text-gray-600">You need to <a href="{{ route('login') }}" class="text-blue-500 hover:underline">login</a> to post a comment.</p>
         @endauth
     </section>
-
-    <div class="flex justify-between items-center">
-        @if ($previous)
-            <a href="{{ route('posts.show', $previous->slug) }}" class="bg-white shadow rounded p-4 w-1/2 mr-2 hover:shadow-md">
-                <p class="text-lg text-blue-800 font-bold flex items-center"><i class="fas fa-arrow-left pr-1"></i> Previous</p>
-                <p class="pt-2">{{ $previous->title }}</p>
-            </a>
-        @endif
-        @if ($next)
-            <a href="{{ route('posts.show', $next->slug) }}" class="bg-white shadow rounded p-4 w-1/2 ml-2 hover:shadow-md text-right">
-                <p class="text-lg text-blue-800 font-bold flex items-center justify-end">Next <i class="fas fa-arrow-right pl-1"></i></p>
-                <p class="pt-2">{{ $next->title }}</p>
-            </a>
-        @endif
-    </div>
 </section>
 @endsection

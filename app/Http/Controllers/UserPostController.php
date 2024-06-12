@@ -30,12 +30,26 @@ class UserPostController extends Controller
     }
 
     public function show(Post $post)
-    {
-        $categories = Category::all();
-        $recent_posts = Post::latest()->take(5)->get();
-        $previous = Post::where('id', '<', $post->id)->orderBy('id', 'desc')->first();
-        $next = Post::where('id', '>', $post->id)->orderBy('id')->first();
+{
+    $categories = Category::all();
+    
 
-        return view('user.posts.show', compact('post', 'categories', 'recent_posts', 'previous', 'next'));
+    // Fetch related posts, assuming they belong to the same category
+    $relatedPosts = Post::where('category_id', $post->category_id)
+                        ->where('id', '!=', $post->id)
+                        ->inRandomOrder()
+                        ->take(3)
+                        ->get();
+
+    // If not enough related posts are found, fetch random posts from mixed categories
+    if ($relatedPosts->count() < 3) {
+        $relatedPosts = Post::where('id', '!=', $post->id)
+                            ->inRandomOrder()
+                            ->take(3)
+                            ->get();
     }
+
+    return view('user.posts.show', compact('post', 'relatedPosts', 'categories'));
+}
+
 }

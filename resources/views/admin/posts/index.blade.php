@@ -2,7 +2,6 @@
 
 @section('content')
 <div class="bg-white shadow-md rounded-lg p-6">
-    <!-- Header with Total Posts and Add Post Button -->
     <div class="flex justify-between items-center mb-4">
         <h1 class="text-xl font-semibold text-gray-800">Posts: {{ $totalPosts }}</h1>
         <a href="{{ route('admin.posts.create') }}" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 flex items-center">
@@ -11,20 +10,20 @@
     </div>
 
     <!-- Search and Filter Form -->
-    <form class="flex flex-col md:flex-row gap-3 mb-4" method="GET" action="{{ route('admin.posts.index') }}">
+    <form id="search-form" class="flex flex-col md:flex-row gap-3 mb-4" method="GET" action="{{ route('admin.posts.index') }}">
         <div class="flex">
             <input type="text" name="search" placeholder="Search for posts" value="{{ request('search') }}"
                 class="w-full md:w-80 px-3 h-10 rounded-l border-2 border-sky-500 focus:outline-none focus:border-sky-500">
             <button type="submit" class="bg-sky-500 text-white rounded-r px-2 md:px-3 py-0 md:py-1">Search</button>
         </div>
-        <select name="sort_order"
+        <select name="sort_order" id="sort-order" onchange="document.getElementById('search-form').submit()"
             class="w-full h-10 border-2 border-sky-500 focus:outline-none focus:border-sky-500 text-sky-500 rounded px-2 md:px-3 py-0 md:py-1 tracking-wider">
             <option value="desc" {{ request('sort_order') == 'desc' ? 'selected' : '' }}>Date Descending</option>
             <option value="asc" {{ request('sort_order') == 'asc' ? 'selected' : '' }}>Date Ascending</option>
         </select>
     </form>
 
-    <!-- Table of Posts -->
+    <!-- Table -->
     <div class="overflow-x-auto">
         <table class="min-w-full bg-white">
             <thead class="bg-gray-50">
@@ -52,10 +51,11 @@
                         <a href="{{ route('admin.posts.edit', $post->slug) }}" class="text-blue-500 hover:text-blue-700">
                             <i class="fas fa-edit"></i>
                         </a>
-                        <button class="text-red-500 hover:text-red-700 ml-2" onclick="openModal('{{ route('admin.posts.destroy', $post->slug) }}')">
+                        <button data-modal-target="deleteModal" data-modal-toggle="deleteModal" class="text-red-500 hover:text-red-700 ml-2" onclick="setDeleteAction('{{ route('admin.posts.destroy', $post->slug) }}')">
                             <i class="fas fa-trash"></i>
                         </button>
                     </td>
+                </tr>
                 @endforeach
             </tbody>
         </table>
@@ -68,17 +68,18 @@
 </div>
 
 <!-- Modal HTML -->
-<div id="deleteModal" class="hidden fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 bg-black bg-opacity-50">
-    <div class="bg-white rounded-lg shadow-lg overflow-hidden w-1/3">
-        <div class="p-4 text-center">
-            <button type="button" class="absolute top-2 right-2 text-gray-400 hover:text-gray-600" onclick="closeModal()">
+<div id="deleteModal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-modal md:h-full">
+    <div class="relative p-4 w-full max-w-md h-full md:h-auto">
+        <!-- Modal content -->
+        <div class="relative p-4 text-center bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
+            <button type="button" class="text-gray-400 absolute top-2.5 right-2.5 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="deleteModal">
                 <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 011.414 0L10 8.586l4.293-4.293a1 1 011.414 1.414L11.414 10l4.293 4.293a1 1 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 01-1.414-1.414L8.586 10 4.293 5.707a1 1 010-1.414z" clip-rule="evenodd"></path></svg>
+                <span class="sr-only">Close modal</span>
             </button>
-            <!-- Danger Icon using Font Awesome -->
-            <i class="fas fa-exclamation-triangle text-red-500 w-12 h-12 mx-auto my-2"></i>
+            <svg class="text-red-500 w-12 h-12 mx-auto my-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M9 2a1 1 00-.894.553L7.382 4H4a1 1 000 2v10a2 2 002 2h8a2 2 002-2V6a1 1 000-2h-3.382l-.724-1.447A1 1 0011 2H9zM7 8a1 1 012 0v6a1 1 11-2 0V8zm5-1a1 1 00-1 1v6a1 1 102 0V8a1 1 00-1-1z" clip-rule="evenodd"></path></svg>
             <p class="mb-4 text-gray-500 dark:text-gray-300">Are you sure you want to delete this item?</p>
             <div class="flex justify-center items-center space-x-4">
-                <button type="button" class="py-2 px-3 text-sm font-medium text-gray-500 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-primary-300 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600" onclick="closeModal()">
+                <button data-modal-toggle="deleteModal" type="button" class="py-2 px-3 text-sm font-medium text-gray-500 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-primary-300 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">
                     No, cancel
                 </button>
                 <form id="deleteForm" method="POST">
@@ -95,15 +96,20 @@
 
 @push('scripts')
 <script>
-    function openModal(action) {
+    function setDeleteAction(action) {
         const form = document.getElementById('deleteForm');
         form.action = action;
-        document.getElementById('deleteModal').classList.remove('hidden');
     }
 
-    function closeModal() {
-        document.getElementById('deleteModal').classList.add('hidden');
-    }
+    document.getElementById('sort-order').addEventListener('change', function() {
+        document.getElementById('search-form').submit();
+    });
 </script>
 @endpush
 @endsection
+
+<script>
+    document.getElementById('sort-order').addEventListener('change', function() {
+        document.getElementById('search-form').submit();
+    });
+</script>

@@ -63,7 +63,7 @@
             theme: 'snow',
             modules: {
                 toolbar: [
-                    [{ 'header': [1, 2, false] }],
+                    [{ 'header': [ 2, false] }],
                     ['bold', 'italic', 'underline'],
                     ['clean']
                 ]
