@@ -1,41 +1,34 @@
-<!-- resources/views/layouts/layout.blade.php -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" crossorigin="anonymous">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
-</head>
-<body class="bg-gray-100">
+@extends('layout')
 
-    <!-- Top Bar -->
-    <nav class="bg-white shadow-md py-4">
-        <div class="container mx-auto px-6 flex justify-between items-center">
-            <div class="text-xl font-bold text-gray-800"><a href="{{ route('home') }}">Minimal Blog</a></div>
-            <div class="flex items-center space-x-4">
-                @guest
-                    <a href="{{ route('login') }}" class="text-blue-500 hover:text-blue-700">Login</a>
-                    <a href="{{ route('register') }}" class="text-blue-500 hover:text-blue-700">Register</a>
-                @else
-                    <a href="{{ route('logout') }}" class="text-red-500 hover:text-red-700"
-                       onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                        <i class="fas fa-sign-out-alt"></i> Logout
+@section('content')
+<div class="max-w-7xl mx-auto my-8 px-2">
+
+    <ul class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 p-2 xl:p-5">
+        @foreach ($posts as $post)
+            <li class="relative bg-white flex flex-col justify-between border rounded shadow-md hover:shadow-teal-400">
+                <a class="relative" href="{{ route('posts.show', $post->slug) }}">
+                    <img class="rounded-t-lg w-full object-cover h-48" src="{{ $post->image ? asset('storage/' . $post->image) : 'https://via.placeholder.com/400x200' }}" alt="{{ $post->title }}" loading="lazy">
+                </a>
+                <div class="flex flex-col justify-between gap-3 px-4 py-2">
+                    <a href="{{ route('posts.show', $post->slug) }}" class="flex flex-col text-left text-xl font-semibold text-teal-700 hover:text-teal-800">
+                        <span>{{ $post->title }}</span>
+                        <small class="font-medium text-sm">- {{ $post->category->name }}</small>
                     </a>
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                        @csrf
-                    </form>
-                @endguest
-            </div>
-        </div>
-    </nav>
+                    <p class="text-gray-600">{{ Str::limit(strip_tags($post->content), 150) }}</p>
+                    <a href="{{ route('posts.show', $post->slug) }}" class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
+                        Read more
+                        <svg class="rtl:rotate-180 w-3.5 h-3.5 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                        </svg>
+                    </a>
+                </div>
+            </li>
+        @endforeach
+    </ul>
 
-    <!-- Main Content -->
-    <div class="container mx-auto px-6 py-8">
-        @yield('content')
+    <!-- Pagination -->
+    <div class="flex items-center py-8">
+        {{ $posts->links('vendor.pagination.custom') }}
     </div>
-
-    @stack('scripts')
-</body>
-</html>
+</div>
+@endsection
