@@ -12,11 +12,11 @@ class AdminPostController extends Controller
     public function index(Request $request)
     {
         $this->authorize('viewAny', Post::class);
-        
+
         // Search and Sort Logic
         $search = $request->input('search');
         $sortOrder = $request->input('sort_order', 'desc');
-        
+
         $query = Post::with('category');
 
         if ($search) {
@@ -26,7 +26,7 @@ class AdminPostController extends Controller
 
         $posts = $query->orderBy('created_at', $sortOrder)->paginate(10);
         $totalPosts = Post::count();
-        
+
         return view('admin.posts.index', compact('posts', 'totalPosts', 'search', 'sortOrder'));
     }
 

@@ -9,17 +9,20 @@ class Comment extends Model
 {
     use HasFactory;
 
+    // Define the attributes that are mass assignable
     protected $fillable = [
         'content',
         'post_id',
         'user_id',
     ];
 
+    // Define the relationship with the Post model
     public function post()
     {
         return $this->belongsTo(Post::class);
     }
 
+    // Define the relationship with the User model
     public function user()
     {
         return $this->belongsTo(User::class);

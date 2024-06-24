@@ -4,9 +4,9 @@
 <div class="bg-white shadow-md rounded-lg p-6">
     <div class="flex justify-between items-center mb-4">
         <h1 class="text-xl font-semibold text-gray-800">Categories</h1>
-        <button class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 flex items-center">
+        <a href="{{ route('admin.categories.create') }}" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 flex items-center">
             <i class="fas fa-plus mr-2"></i>Add Category
-        </button>
+        </a>
     </div>
 
     <!-- Table -->
@@ -23,10 +23,10 @@
                 <tr class="border-t">
                     <td class="px-4 py-2">{{ $category->name }}</td>
                     <td class="px-4 py-2 text-right">
-                        <button class="text-blue-500 hover:text-blue-700">
+                        <a href="{{ route('admin.categories.edit', $category->id) }}" class="text-blue-500 hover:text-blue-700">
                             <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="text-red-500 hover:text-red-700 ml-2">
+                        </a>
+                        <button onclick="setDeleteAction('{{ route('admin.categories.destroy', $category->id) }}')" class="text-red-500 hover:text-red-700 ml-2">
                             <i class="fas fa-trash"></i>
                         </button>
                     </td>

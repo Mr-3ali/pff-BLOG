@@ -6,7 +6,7 @@ use App\Models\Comment;
 use App\Models\Post;
 use Illuminate\Http\Request;
 
-class userCommentcontroller extends Controller
+class UserCommentController extends Controller
 {
     public function store(Request $request, Post $post)
     {

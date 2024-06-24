@@ -15,7 +15,7 @@ class CommentPolicy
      *
      * @param  \App\Models\User  $user
      * @param  \App\Models\Comment  $comment
-     * @return mixed
+     * @return bool
      */
     public function delete(User $user, Comment $comment)
     {

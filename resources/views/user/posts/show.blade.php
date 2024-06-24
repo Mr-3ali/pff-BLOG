@@ -4,21 +4,22 @@
 <!-- Post Section -->
 <section class="max-w-5xl mx-auto p-4">
     <article class="bg-white rounded shadow-lg overflow-hidden mb-6">
-        <div class="flex items-start">
-            @if ($post->image)
-                <!-- Post Image -->
-                <img src="{{ asset('storage/' . $post->image) }}" alt="{{ $post->title }}" class="w-1/3 h-48 object-cover rounded-l-lg">
-            @endif
-            <div class="p-6 w-2/3">
-                <!-- Post Title -->
-                <h1 class="text-3xl font-bold">{{ $post->title }}</h1>
-                <!-- Post Metadata -->
-                <p class="text-sm text-gray-600 mt-1">Published on {{ $post->created_at->format('F j, Y') }}</p>
-                <a href="{{ route('categories.show', $post->category->slug) }}" class="text-blue-700 text-xs font-bold uppercase mt-1 block">{{ $post->category->name }}</a>
+        <!-- Post Title and Metadata -->
+        <div class="p-6">
+            <h1 class="text-4xl font-bold">{{ $post->title }}</h1>
+            <div class="flex items-center mt-2">
+                <a href="{{ route('categories.show', $post->category->slug) }}" class="text-blue-700 text-sm font-bold uppercase mr-4">{{ $post->category->name }}</a>
+                <p class="text-sm text-gray-600">Published on {{ $post->created_at->format('F j, Y') }}</p>
             </div>
         </div>
+        <!-- Post Image -->
+        @if ($post->image)
+            <div class="w-full h-96 overflow-hidden">
+                <img src="{{ asset('storage/' . $post->image) }}" alt="{{ $post->title }}" class="object-cover w-full h-full">
+            </div>
+        @endif
         <!-- Post Content -->
-        <div class="p-6 prose prose-lg mt-4">
+        <div class="p-6 prose prose-lg mt-4 w-full lg:w-3/4 xl:w-2/3 mx-auto">
             {!! $post->content !!}
         </div>
     </article>
