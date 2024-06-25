@@ -1,28 +1,33 @@
 @extends('layout')
+@section('title', $post->title)
 
 @section('content')
     <!-- Post Section -->
     <section class="max-w-5xl mx-auto p-4">
         <article class="bg-white rounded shadow-lg overflow-hidden mb-6">
-   <!-- Post Title and Metadata -->
-<div class="p-6">
-    <h1 class="text-4xl font-bold leading-tight text-gray-900">{{ $post->title }}</h1>
-    <div class="flex items-center mt-2 text-sm text-gray-600">
-        <a href="{{ route('categories.show', $post->category->slug) }}" class="text-blue-700 font-bold uppercase mr-4">{{ $post->category->name }}</a>
-        <p>Published on {{ $post->created_at->format('F j, Y') }}</p>
-    </div>
-</div>
-<!-- Post Image -->
-@if ($post->image)
-    <div class="w-full overflow-hidden">
-        <img src="{{ asset('storage/' . $post->image) }}" alt="{{ $post->title }}" class="object-cover w-full h-64">
-    </div>
-@endif
-<!-- Post Content -->
-<div class="p-6 prose prose-lg mt-4 w-full mx-auto">
-    {!! $post->content !!}
-</div>
+            <!-- Post Title and Metadata -->
+            <div class="p-6">
+                <h1 class="text-4xl font-bold leading-tight text-gray-900 mb-2">{{ $post->title }}</h1>
+                <div class="flex items-center text-sm text-gray-600 space-x-2">
+                    <a href="{{ route('categories.show', $post->category->slug) }}" class="text-blue-700 font-semibold uppercase">{{ $post->category->name }}</a>
+                    <span class="text-gray-500">|</span>
+                    <p>Published on {{ $post->created_at->format('F j, Y') }}</p>
+                    <span class="text-gray-500">|</span>
+                    <p>{{ ceil(str_word_count(strip_tags($post->content)) / 200) }} min read</p>
+                </div>
+            </div>
 
+            <!-- Post Image -->
+            @if ($post->image)
+                <div class="w-full overflow-hidden">
+                    <img src="{{ asset('storage/' . $post->image) }}" alt="{{ $post->title }}" class="w-full h-64 object-cover">
+                </div>
+            @endif
+
+            <!-- Post Content -->
+            <div class="p-6 prose prose-lg mt-4 w-full mx-auto ql-align-justify">
+                {!! $post->content !!}
+            </div>
         </article>
 
         <!-- You Might Also Like Section -->
@@ -101,3 +106,18 @@
         </section>
     </section>
 @endsection
+
+@push('scripts')
+    <script>
+        // Update progress bar to track the post content
+        document.addEventListener('scroll', function() {
+            var content = document.querySelector('.prose');
+            var contentHeight = content.offsetHeight;
+            var contentTop = content.offsetTop;
+            var scrollPosition = window.scrollY - contentTop;
+            var progress = Math.min(Math.max(scrollPosition / contentHeight * 100, 0), 100);
+
+            document.getElementById('progressBar').style.width = progress + '%';
+        });
+    </script>
+@endpush

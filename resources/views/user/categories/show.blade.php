@@ -1,17 +1,18 @@
 @extends('layout')
 
+@section('title', $category->name)
+
 @section('content')
 <div class="max-w-7xl mx-auto my-8 px-2">
-
-    <h1 class="text-4xl font-bold mb-4">{{ $category->name }}</h1>
+    <h1 class="text-4xl font-bold mb-6 text-center">{{ $category->name }}</h1>
 
     <ul class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 p-2 xl:p-5">
         @foreach ($posts as $post)
-            <li class="relative bg-white flex flex-col justify-between border rounded shadow-md hover:shadow-teal-400">
+            <li class="relative bg-white flex flex-col justify-between border rounded shadow-md hover:shadow-teal-400 transition-shadow duration-200">
                 <a class="relative" href="{{ route('posts.show', $post->slug) }}">
                     <img class="rounded-t-lg w-full object-cover h-48" src="{{ $post->image ? asset('storage/' . $post->image) : 'https://via.placeholder.com/400x200' }}" alt="{{ $post->title }}" loading="lazy">
                 </a>
-                <div class="flex flex-col justify-between gap-3 px-4 py-2">
+                <div class="flex flex-col justify-between gap-3 px-4 py-4">
                     <a href="{{ route('posts.show', $post->slug) }}" class="flex flex-col text-left text-xl font-semibold text-teal-700 hover:text-teal-800">
                         <span>{{ $post->title }}</span>
                         <small class="font-medium text-sm">- {{ $post->category->name }}</small>
@@ -29,7 +30,7 @@
     </ul>
 
     <!-- Pagination -->
-    <div class="flex items-center py-8">
+    <div class="flex items-center py-8 justify-center">
         {{ $posts->links('vendor.pagination.custom') }}
     </div>
 </div>
