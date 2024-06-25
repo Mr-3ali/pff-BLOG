@@ -5,9 +5,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\UserPostController;
 use App\Http\Controllers\AdminPostController;
+use App\Http\Controllers\AdminUserController;
+use App\Http\Controllers\AdminCommentController;
 use App\Http\Controllers\UserCategoryController;
 use App\Http\Controllers\AdminCategoryController;
-use App\Http\Controllers\UserCommentController; // Correct the casing for consistency
+use App\Http\Controllers\UserCommentController;
 
 // Public Routes
 Route::get('/', [UserPostController::class, 'index'])->name('home');
@@ -29,6 +31,13 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->as('admin.')->group(funct
     
     // Admin Categories Routes
     Route::resource('categories', AdminCategoryController::class)->except(['show']);
+    
+    // Admin Users Routes
+    Route::resource('users', AdminUserController::class)->except(['show']);
+    
+    // Admin Comments Routes
+    Route::get('comments', [AdminCommentController::class, 'index'])->name('comments.index');
+    Route::delete('comments/{comment}', [AdminCommentController::class, 'destroy'])->name('comments.destroy');
 });
 
 // Authentication Routes
